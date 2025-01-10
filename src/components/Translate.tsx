@@ -1,3 +1,7 @@
 export default function Translate() {
-  return <div>Translate</div>;
+  return (
+    <div>
+      <button>Translate</button>
+    </div>
+  );
 }

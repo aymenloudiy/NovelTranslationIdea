@@ -1,3 +1,7 @@
 export default function Library() {
-  return <div>Library</div>;
+  return (
+    <div>
+      <button>Library</button>
+    </div>
+  );
 }

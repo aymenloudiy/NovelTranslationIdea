@@ -1,3 +1,7 @@
 export default function Terms() {
-  return <div>Terms</div>;
+  return (
+    <div>
+      <button>Terms</button>
+    </div>
+  );
 }
