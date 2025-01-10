@@ -4,11 +4,11 @@ import Translate from "./Translate";
 
 export default function Sidebar() {
   return (
-    <div>
+    <nav>
       <button>Collapse</button>
       <Translate></Translate>
       <Library></Library>
       <Terms></Terms>
-    </div>
+    </nav>
   );
 }
