@@ -1,8 +1,21 @@
-export default function MainContent() {
+import { ChangeEvent, useState } from "react";
+interface MainContentInterface {
+  textContent: string;
+}
+export default function MainContent({ textContent }: MainContentInterface) {
+  const [content, setContent] = useState("");
+  function handleContentChange(e: ChangeEvent<HTMLTextAreaElement>) {
+    setContent(e.currentTarget.value);
+  }
   return (
     <div>
       <label htmlFor="">
-        <textarea name="" id=""></textarea>
+        <textarea
+          value={textContent}
+          onChange={handleContentChange}
+          name=""
+          id=""
+        ></textarea>
       </label>
       <div>
         <h2></h2>
@@ -10,7 +23,7 @@ export default function MainContent() {
           <button>Raw</button>
           <button>Translated</button>
         </div>
-        <p></p>
+        <p>{content}</p>
       </div>
     </div>
   );
