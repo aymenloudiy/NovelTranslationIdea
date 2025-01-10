@@ -8,7 +8,7 @@ export default function MainContent({ textContent }: MainContentInterface) {
     setContent(e.currentTarget.value);
   }
   return (
-    <div>
+    <main>
       <label htmlFor="">
         <textarea
           value={textContent}
@@ -25,6 +25,6 @@ export default function MainContent({ textContent }: MainContentInterface) {
         </div>
         <p>{content}</p>
       </div>
-    </div>
+    </main>
   );
 }
