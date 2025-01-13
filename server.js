@@ -12,3 +12,22 @@ app.use(express.json());
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+app.post("/chatbot", async (req, res) => {
+  const { question } = req.body;
+  const response = await openai.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: "You are a helpful assistant.",
+      },
+      {
+        role: "user",
+        content: question,
+      },
+    ],
+    model: "gpt-3.5-turbo",
+    max_tokens: 300,
+  });
+  res.send(response.choices[0].message.content);
+});
