@@ -3,7 +3,7 @@ import cors from "cors";
 import { OpenAI } from "openai";
 
 const app = express();
-const port = process.env.PORT || 3005;
+const port = process.env.PORT || 8081;
 const apiKey = process.env.VITE_OPEN_AI_KEY;
 const openai = new OpenAI({ apiKey: apiKey });
 
