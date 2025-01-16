@@ -1,21 +1,9 @@
-import { ChangeEvent, useState } from "react";
-interface MainContentInterface {
-  textContent: string;
-}
-export default function MainContent({ textContent }: MainContentInterface) {
-  const [content, setContent] = useState("");
-  function handleContentChange(e: ChangeEvent<HTMLTextAreaElement>) {
-    setContent(e.currentTarget.value);
-  }
+import Chatbot from "./Chatbot";
+export default function MainContent() {
   return (
     <main>
       <label htmlFor="">
-        <textarea
-          value={textContent}
-          onChange={handleContentChange}
-          name=""
-          id=""
-        ></textarea>
+        <Chatbot></Chatbot>
       </label>
       <div>
         <h2></h2>
@@ -23,7 +11,7 @@ export default function MainContent({ textContent }: MainContentInterface) {
           <button>Raw</button>
           <button>Translated</button>
         </div>
-        <p>{content}</p>
+        <p></p>
       </div>
     </main>
   );
