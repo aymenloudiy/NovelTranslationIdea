@@ -4,7 +4,7 @@ import Translate from "./Translate";
 
 export default function Sidebar() {
   return (
-    <nav>
+    <nav className="col-span-3">
       <button>Collapse</button>
       <Translate></Translate>
       <Library></Library>

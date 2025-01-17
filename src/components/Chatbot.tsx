@@ -15,15 +15,12 @@ export default function Chatbot() {
   return (
     <div>
       <div className="container">
+        <p>Chatbot:{response}</p>
         <div>
           <textarea value={value} onChange={onChange}></textarea>
         </div>
         <div>
-          <button>Send</button>
           <button onClick={handleSubmit}>Send</button>
-        </div>
-        <div>
-          <p>Chatbot:{response}</p>
         </div>
       </div>
     </div>

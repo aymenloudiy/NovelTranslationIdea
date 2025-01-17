@@ -4,10 +4,10 @@ import Sidebar from "./components/Sidebar";
 
 function App() {
   return (
-    <>
+    <div className="grid grid-cols-12 h-screen">
       <Sidebar></Sidebar>
-      <MainContent textContent=""></MainContent>
-    </>
+      <MainContent></MainContent>
+    </div>
   );
 }
 
