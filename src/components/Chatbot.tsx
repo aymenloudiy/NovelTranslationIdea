@@ -26,6 +26,7 @@ export default function Chatbot() {
           Your message
         </label> */}
         <textarea
+          aria-label="novel chapter input"
           value={value}
           onChange={onChange}
           id="message"
