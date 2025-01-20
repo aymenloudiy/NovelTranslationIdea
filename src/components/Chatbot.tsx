@@ -13,8 +13,8 @@ export default function Chatbot() {
     setResponse(response.data);
   };
   return (
-    <div>
-      <div className="container">
+    <div className="w-full">
+      <div className="container h-full">
         <p className="mb-3 text-gray-500 dark:text-gray-400">{response}</p>
 
         <label
