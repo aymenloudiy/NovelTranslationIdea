@@ -14,12 +14,14 @@ export default function Chatbot() {
   };
   return (
     <div className="w-full">
-      <div className="container h-full">
-        <p className="mb-3 text-gray-500 dark:text-gray-400">{response}</p>
+      <div className="container h-full grid grid-rows-12">
+        <p className="mb-3 text-gray-500 dark:text-gray-400 col-span-full row-span-8">
+          {response}
+        </p>
 
         <label
           htmlFor="message"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white "
         >
           Your message
         </label>
@@ -27,8 +29,8 @@ export default function Chatbot() {
           value={value}
           onChange={onChange}
           id="message"
-          rows={4}
-          className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          rows={6}
+          className=" row-span-2block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Write your thoughts here..."
         ></textarea>
 
