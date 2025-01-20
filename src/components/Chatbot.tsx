@@ -15,16 +15,16 @@ export default function Chatbot() {
   return (
     <div className="w-full">
       <div className="container h-full grid grid-rows-12">
-        <p className="mb-3 text-gray-500 dark:text-gray-400 col-span-full row-span-8">
+        <p className="mb-3 text-gray-100 dark:text-gray-100 col-span-full row-span-8">
           {response}
         </p>
 
-        <label
+        {/* <label
           htmlFor="message"
           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white "
         >
           Your message
-        </label>
+        </label> */}
         <textarea
           value={value}
           onChange={onChange}
