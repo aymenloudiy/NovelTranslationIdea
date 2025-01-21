@@ -15,6 +15,15 @@ app.use(express.json());
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+app.delete("/api/library/id", (req, res) => {
+  let novelId = req.params.id;
+  let novelIndex = mockData.findIndex((e) => e.id === parseInt(novelId));
+  if (!novel) {
+    res.json({ error: `novel with id ${novelId} not found` });
+    return;
+  }
+  mockData.slice(novelIndex, 1);
+});
 app.get("/api/library", (req, res) => {
   res.json({
     data: [
