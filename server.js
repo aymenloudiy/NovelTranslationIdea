@@ -12,7 +12,17 @@ app.use(express.json());
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
+app.get("/library", (req, res) => {
+  res.json({
+    data: {
+      0: { title: "A Sorcerer's Journey", id: "1" },
+      1: {
+        title: "Reverend Insanity",
+        id: "2",
+      },
+    },
+  });
+});
 app.post("/chatbot", async (req, res) => {
   const { question } = req.body;
   const response = await openai.chat.completions.create({
