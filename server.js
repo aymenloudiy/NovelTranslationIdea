@@ -15,7 +15,7 @@ app.use(express.json());
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-app.get("/library", (req, res) => {
+app.get("/api/library", (req, res) => {
   res.json({
     data: [
       { title: "A Sorcerer's Journey", id: "1" },
@@ -26,7 +26,7 @@ app.get("/library", (req, res) => {
     ],
   });
 });
-app.get("/library/:id", (req, res) => {
+app.get("/api/library/:id", (req, res) => {
   let novelId = req.params.id;
   let novel = mockData.find((e) => e.id === parseInt(novelId));
   if (!novel) {
