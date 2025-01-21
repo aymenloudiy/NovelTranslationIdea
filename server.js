@@ -1,7 +1,10 @@
 import express from "express";
 import cors from "cors";
 import { OpenAI } from "openai";
-
+const mockData = [
+  { id: 0, title: "A Sorcerer's Journey" },
+  { id: 1, title: "Reverend Insanity" },
+];
 const app = express();
 const port = process.env.PORT || 8081;
 const apiKey = process.env.VITE_OPEN_AI_KEY;
@@ -14,13 +17,30 @@ app.listen(port, () => {
 });
 app.get("/library", (req, res) => {
   res.json({
-    data: {
-      0: { title: "A Sorcerer's Journey", id: "1" },
-      1: {
+    data: [
+      { title: "A Sorcerer's Journey", id: "1" },
+      {
         title: "Reverend Insanity",
         id: "2",
       },
-    },
+    ],
+  });
+});
+app.get("/library/:id", (req, res) => {
+  let novelId = req.params.id;
+  let novel = mockData.find((e) => e.id === parseInt(novelId));
+  if (!novel) {
+    res.json({ error: `novel with id ${novelId} not found` });
+    return;
+  }
+  res.json({
+    data: [
+      { title: "A Sorcerer's Journey", id: "1" },
+      {
+        title: "Reverend Insanity",
+        id: "2",
+      },
+    ],
   });
 });
 app.post("/chatbot", async (req, res) => {
