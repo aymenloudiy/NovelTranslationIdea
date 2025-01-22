@@ -1,6 +1,14 @@
 import express from "express";
 import cors from "cors";
 import { OpenAI } from "openai";
+const bodyParser = require("body-parser");
+const { Sequelize, Model, DataTypes } = require("sequelize");
+
+const sequelize = new Sequelize({
+  dialect: "sqlite",
+  storage: "./database.sqlite",
+});
+
 const mockData = [
   { id: 0, title: "A Sorcerer's Journey" },
   { id: 1, title: "Reverend Insanity" },
