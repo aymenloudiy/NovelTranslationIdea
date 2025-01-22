@@ -12,5 +12,4 @@ db.serialize(() => {
   stmt.finalize();
 });
 db.close();
-
 module.exports = db;
