@@ -23,3 +23,13 @@ const Translation = sequelize.define(
   },
   { timestamps: true }
 );
+const TranslationDictionary = sequelize.define(
+  "TranslationDictionary",
+  {
+    sourceTerm: { type: DataTypes.TEXT, allowNull: false },
+    targetTerm: { type: DataTypes.TEXT, allowNull: false },
+    sourceLanguage: DataTypes.TEXT,
+    targetLanguage: DataTypes.TEXT,
+  },
+  { timestamps: true }
+);
