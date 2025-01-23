@@ -33,3 +33,5 @@ const TranslationDictionary = sequelize.define(
   },
   { timestamps: true }
 );
+Novel.hasMany(Translation, { onDelete: "CASCADE" });
+Translation.belongsTo(Novel);
