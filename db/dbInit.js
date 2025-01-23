@@ -12,3 +12,14 @@ const Novel = sequelize.define(
   },
   { timestamps: true }
 );
+const Translation = sequelize.define(
+  "Translation",
+  {
+    chapterNumber: { type: DataTypes.INTEGER, allowNull: false },
+    chapterTitle: DataTypes.TEXT,
+    translatedContent: { type: DataTypes.TEXT, allowNull: false },
+    targetLanguage: { type: DataTypes.TEXT, allowNull: false },
+    translatorName: DataTypes.TEXT,
+  },
+  { timestamps: true }
+);
