@@ -33,8 +33,6 @@ const TranslationDictionary = sequelize.define(
   },
   { timestamps: true }
 );
-
-// Associations
 Novel.hasMany(Translation, { onDelete: "CASCADE" });
 Translation.belongsTo(Novel);
 
