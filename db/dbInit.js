@@ -28,10 +28,15 @@ const TranslationDictionary = sequelize.define(
   {
     sourceTerm: { type: DataTypes.TEXT, allowNull: false },
     targetTerm: { type: DataTypes.TEXT, allowNull: false },
-    sourceLanguage: DataTypes.TEXT,
-    targetLanguage: DataTypes.TEXT,
+    sourceLanguage: { type: DataTypes.TEXT, allowNull: false },
+    targetLanguage: { type: DataTypes.TEXT, allowNull: false },
   },
   { timestamps: true }
 );
+
+// Associations
 Novel.hasMany(Translation, { onDelete: "CASCADE" });
 Translation.belongsTo(Novel);
+
+Novel.hasMany(TranslationDictionary, { onDelete: "CASCADE" });
+TranslationDictionary.belongsTo(Novel);
