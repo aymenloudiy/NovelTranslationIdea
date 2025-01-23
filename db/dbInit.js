@@ -40,3 +40,11 @@ Translation.belongsTo(Novel);
 
 Novel.hasMany(TranslationDictionary, { onDelete: "CASCADE" });
 TranslationDictionary.belongsTo(Novel);
+(async () => {
+  try {
+    await sequelize.sync({ force: true });
+    console.log("Database synced!");
+  } catch (error) {
+    console.error("Error syncing database:", error);
+  }
+})();
