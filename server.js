@@ -9,10 +9,6 @@ const sequelize = new Sequelize({
   storage: "./database.sqlite",
 });
 
-const mockData = [
-  { id: 0, title: "A Sorcerer's Journey" },
-  { id: 1, title: "Reverend Insanity" },
-];
 const app = express();
 const port = process.env.PORT || 8081;
 const apiKey = process.env.VITE_OPEN_AI_KEY;
