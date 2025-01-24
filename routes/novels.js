@@ -21,3 +21,12 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch novel" });
   }
 });
+router.post("/", async (req, res) => {
+  try {
+    const { title, genre, language } = req.body;
+    const novel = await Novel.create({ title, genre, language });
+    res.status(201).json(novel);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create novel" });
+  }
+});
