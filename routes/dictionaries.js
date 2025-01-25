@@ -35,3 +35,24 @@ router.post("/novel/:novelId", async (req, res) => {
     res.status(500).json({ error: "Failed to create dictionary entry" });
   }
 });
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { sourceTerm, targetTerm, sourceLanguage, targetLanguage } = req.body;
+
+    const entry = await TranslationDictionary.findByPk(id);
+    if (!entry) {
+      return res.status(404).json({ error: "Dictionary entry not found" });
+    }
+
+    await entry.update({
+      sourceTerm,
+      targetTerm,
+      sourceLanguage,
+      targetLanguage,
+    });
+    res.json(entry);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update dictionary entry" });
+  }
+});
