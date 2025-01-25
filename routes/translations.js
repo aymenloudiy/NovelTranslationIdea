@@ -41,3 +41,31 @@ router.post("/novel/:novelId", async (req, res) => {
     res.status(500).json({ error: "Failed to create translation" });
   }
 });
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      chapterNumber,
+      chapterTitle,
+      translatedContent,
+      targetLanguage,
+      translatorName,
+    } = req.body;
+
+    const translation = await Translation.findByPk(id);
+    if (!translation) {
+      return res.status(404).json({ error: "Translation not found" });
+    }
+
+    await translation.update({
+      chapterNumber,
+      chapterTitle,
+      translatedContent,
+      targetLanguage,
+      translatorName,
+    });
+    res.json(translation);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update translation" });
+  }
+});
