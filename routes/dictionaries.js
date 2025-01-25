@@ -56,3 +56,19 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to update dictionary entry" });
   }
 });
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const entry = await TranslationDictionary.findByPk(id);
+    if (!entry) {
+      return res.status(404).json({ error: "Dictionary entry not found" });
+    }
+
+    await entry.destroy();
+    res.json({ message: "Dictionary entry deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete dictionary entry" });
+  }
+});
+
+export default router;
