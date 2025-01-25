@@ -69,3 +69,19 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to update translation" });
   }
 });
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const translation = await Translation.findByPk(id);
+    if (!translation) {
+      return res.status(404).json({ error: "Translation not found" });
+    }
+
+    await translation.destroy();
+    res.json({ message: "Translation deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete translation" });
+  }
+});
+
+export default router;
