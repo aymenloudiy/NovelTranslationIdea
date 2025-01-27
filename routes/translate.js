@@ -33,6 +33,8 @@ app.post("/api/translate", async (req, res) => {
       .status(400)
       .json({ error: "Input is too long and exceeds token limits." });
   }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
   const response = await openai.chat.completions.create({
     messages: [
       {
@@ -79,7 +81,7 @@ app.post("/api/translate", async (req, res) => {
       },
     ],
   });
-
+  clearTimeout(timeout);
   res.send(response.choices[0].message.content);
 });
 
