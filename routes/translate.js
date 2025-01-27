@@ -1,7 +1,13 @@
 import express from "express";
+import { OpenAI } from "openai";
 
 const router = express.Router();
+if (!apiKey) {
+  throw new Error("OpenAI API key is not defined in environment variables.");
+}
 
+const openai = new OpenAI({ apiKey });
+const MAX_TOKENS = 8192;
 app.post("/chatbot", async (req, res) => {
   const { question } = req.body;
   const response = await openai.chat.completions.create({
