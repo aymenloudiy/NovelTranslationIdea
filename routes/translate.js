@@ -16,7 +16,7 @@ const estimateTokens = (text) => {
   encoding.free();
   return tokens.length;
 };
-app.post("/api/translate", async (req, res) => {
+app.post("/", async (req, res) => {
   const { question } = req.body;
   if (!question || typeof question !== "string") {
     return res
@@ -86,7 +86,10 @@ app.post("/api/translate", async (req, res) => {
     { signal: controller.signal }
   );
   clearTimeout(timeout);
-  res.send(response.choices[0].message.content);
+  res.json({
+    success: true,
+    data: response.choices[0].message.content,
+  });
 });
 
 export default router;
