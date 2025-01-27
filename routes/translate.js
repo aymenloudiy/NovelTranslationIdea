@@ -16,8 +16,11 @@ const estimateTokens = (text) => {
   encoding.free();
   return tokens.length;
 };
-app.post("/chatbot", async (req, res) => {
+app.post("/api/translate", async (req, res) => {
   const { question } = req.body;
+  if (!question || typeof question !== "string") {
+    return res.status(400).json({ error: "'question' is required and must be a string." });
+}
   const response = await openai.chat.completions.create({
     messages = [
         {
