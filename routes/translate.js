@@ -19,13 +19,15 @@ const estimateTokens = (text) => {
 app.post("/api/translate", async (req, res) => {
   const { question } = req.body;
   if (!question || typeof question !== "string") {
-    return res.status(400).json({ error: "'question' is required and must be a string." });
-}
+    return res
+      .status(400)
+      .json({ error: "'question' is required and must be a string." });
+  }
   const response = await openai.chat.completions.create({
-    messages = [
-        {
-            role: "system",
-            content: `
+    messages: [
+      {
+        role: "system",
+        content: `
             You are an expert translator specializing in translating Chinese web novels into English, ensuring cultural nuances and authenticity. Follow these rules:
     
             1. **Input**: A JSON object with:
@@ -60,12 +62,12 @@ app.post("/api/translate", async (req, res) => {
               "translated_text": "Wang Xiaoming walked into the room and saw Li Hua."
             }
             `,
-        },
-        {
-            role: "user",
-            content: question,
-        },
-    ];
+      },
+      {
+        role: "user",
+        content: question,
+      },
+    ],
   });
 
   res.send(response.choices[0].message.content);
