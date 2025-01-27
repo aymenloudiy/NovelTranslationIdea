@@ -23,6 +23,16 @@ app.post("/api/translate", async (req, res) => {
       .status(400)
       .json({ error: "'question' is required and must be a string." });
   }
+  const userTokens = estimateTokens(question);
+  console.log(`User input tokens: ${userTokens}`);
+  const systemMessage = "DONT FORGET TO ADD DEFAULT SYSTEM MESSAGE AGAIN";
+  const systemTokens = estimateTokens(systemMessage);
+  const remainingTokens = MAX_TOKENS - (systemTokens + userTokens);
+  if (remainingTokens <= 0) {
+    return res
+      .status(400)
+      .json({ error: "Input is too long and exceeds token limits." });
+  }
   const response = await openai.chat.completions.create({
     messages: [
       {
