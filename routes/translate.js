@@ -35,11 +35,12 @@ app.post("/api/translate", async (req, res) => {
   }
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
-  const response = await openai.chat.completions.create({
-    messages: [
-      {
-        role: "system",
-        content: `
+  const response = await openai.chat.completions.create(
+    {
+      messages: [
+        {
+          role: "system",
+          content: `
             You are an expert translator specializing in translating Chinese web novels into English, ensuring cultural nuances and authenticity. Follow these rules:
     
             1. **Input**: A JSON object with:
@@ -74,13 +75,16 @@ app.post("/api/translate", async (req, res) => {
               "translated_text": "Wang Xiaoming walked into the room and saw Li Hua."
             }
             `,
-      },
-      {
-        role: "user",
-        content: question,
-      },
-    ],
-  });
+        },
+        {
+          role: "user",
+          content: question,
+        },
+      ],
+      max_tokens: remainingTokens,
+    },
+    { signal: controller.signal }
+  );
   clearTimeout(timeout);
   res.send(response.choices[0].message.content);
 });
