@@ -80,3 +80,5 @@ app.post("/chatbot", async (req, res) => {
 
   res.send(response.choices[0].message.content);
 });
+
+export default router;
