@@ -1,5 +1,6 @@
 import express from "express";
 import { OpenAI } from "openai";
+import { encoding_for_model } from "tiktoken";
 
 const router = express.Router();
 if (!apiKey) {
@@ -8,6 +9,13 @@ if (!apiKey) {
 
 const openai = new OpenAI({ apiKey });
 const MAX_TOKENS = 8192;
+
+const estimateTokens = (text) => {
+  const encoding = encoding_for_model("gpt-4");
+  const tokens = encoding.encode(text);
+  encoding.free();
+  return tokens.length;
+};
 app.post("/chatbot", async (req, res) => {
   const { question } = req.body;
   const response = await openai.chat.completions.create({
