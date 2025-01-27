@@ -23,24 +23,25 @@ app.post("/", async (req, res) => {
       .status(400)
       .json({ error: "'question' is required and must be a string." });
   }
-  const userTokens = estimateTokens(question);
-  console.log(`User input tokens: ${userTokens}`);
-  const systemMessage = "DONT FORGET TO ADD DEFAULT SYSTEM MESSAGE AGAIN";
-  const systemTokens = estimateTokens(systemMessage);
-  const remainingTokens = MAX_TOKENS - (systemTokens + userTokens);
-  if (remainingTokens <= 0) {
-    return res
-      .status(400)
-      .json({ error: "Input is too long and exceeds token limits." });
-  }
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000);
-  const response = await openai.chat.completions.create(
-    {
-      messages: [
-        {
-          role: "system",
-          content: `
+  try {
+    const userTokens = estimateTokens(question);
+    console.log(`User input tokens: ${userTokens}`);
+    const systemMessage = "DONT FORGET TO ADD DEFAULT SYSTEM MESSAGE AGAIN";
+    const systemTokens = estimateTokens(systemMessage);
+    const remainingTokens = MAX_TOKENS - (systemTokens + userTokens);
+    if (remainingTokens <= 0) {
+      return res
+        .status(400)
+        .json({ error: "Input is too long and exceeds token limits." });
+    }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const response = await openai.chat.completions.create(
+      {
+        messages: [
+          {
+            role: "system",
+            content: `
             You are an expert translator specializing in translating Chinese web novels into English, ensuring cultural nuances and authenticity. Follow these rules:
     
             1. **Input**: A JSON object with:
@@ -75,21 +76,35 @@ app.post("/", async (req, res) => {
               "translated_text": "Wang Xiaoming walked into the room and saw Li Hua."
             }
             `,
-        },
-        {
-          role: "user",
-          content: question,
-        },
-      ],
-      max_tokens: remainingTokens,
-    },
-    { signal: controller.signal }
-  );
-  clearTimeout(timeout);
-  res.json({
-    success: true,
-    data: response.choices[0].message.content,
-  });
+          },
+          {
+            role: "user",
+            content: question,
+          },
+        ],
+        max_tokens: remainingTokens,
+      },
+      { signal: controller.signal }
+    );
+    clearTimeout(timeout);
+    res.json({
+      success: true,
+      data: response.choices[0].message.content,
+    });
+  } catch (error) {
+    if (error.name === "AbortError") {
+      return res
+        .status(504)
+        .json({ error: "Request timed out. Please try again later." });
+    }
+
+    console.error("Error processing the OpenAI request:", error);
+    res
+      .status(500)
+      .json({
+        error: "Failed to process the request. Please try again later.",
+      });
+  }
 });
 
 export default router;
