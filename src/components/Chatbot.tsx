@@ -7,7 +7,7 @@ export default function Chatbot() {
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
     setValue(e.target.value);
   const handleSubmit = async () => {
-    const response = await axios.post("http://localhost:8081/chatbot", {
+    const response = await axios.post("http://localhost:8081/api/translate", {
       question: value,
     });
     setResponse(response.data);
