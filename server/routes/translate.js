@@ -17,7 +17,7 @@ const estimateTokens = (text) => {
   encoding.free();
   return tokens.length;
 };
-app.post("/", async (req, res) => {
+router.post("/", async (req, res) => {
   const { question } = req.body;
   if (!question || typeof question !== "string") {
     return res
