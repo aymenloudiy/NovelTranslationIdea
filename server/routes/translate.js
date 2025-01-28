@@ -3,6 +3,7 @@ import { OpenAI } from "openai";
 import { encoding_for_model } from "tiktoken";
 
 const router = express.Router();
+const apiKey = process.env.VITE_OPEN_AI_KEY || "qwe123";
 if (!apiKey) {
   throw new Error("OpenAI API key is not defined in environment variables.");
 }
@@ -99,11 +100,9 @@ app.post("/", async (req, res) => {
     }
 
     console.error("Error processing the OpenAI request:", error);
-    res
-      .status(500)
-      .json({
-        error: "Failed to process the request. Please try again later.",
-      });
+    res.status(500).json({
+      error: "Failed to process the request. Please try again later.",
+    });
   }
 });
 
