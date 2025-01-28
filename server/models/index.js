@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require("sequelize");
+import { Sequelize, DataTypes } from "sequelize";
 const sequelize = new Sequelize({
   dialect: "sqlite",
   storage: "./database.sqlite",
@@ -31,4 +31,4 @@ Translation.belongsTo(Novel);
 Novel.hasMany(TranslationDictionary, { onDelete: "CASCADE" });
 TranslationDictionary.belongsTo(Novel);
 
-module.exports = { sequelize, Novel, Translation, TranslationDictionary };
+export { sequelize, Novel, Translation, TranslationDictionary };
