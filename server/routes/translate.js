@@ -1,9 +1,12 @@
 import express from "express";
 import { OpenAI } from "openai";
 import { encoding_for_model } from "tiktoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = express.Router();
-const apiKey = process.env.VITE_OPEN_AI_KEY || "qwe123";
+const apiKey = process.env.OPEN_AI_KEY || "qwe123";
 if (!apiKey) {
   throw new Error("OpenAI API key is not defined in environment variables.");
 }
