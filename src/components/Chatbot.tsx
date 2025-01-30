@@ -14,6 +14,7 @@ export default function Chatbot() {
     const text = response.data.translated_text;
     const dict = response.data.dictionary;
     await axios.post(`${url}/api/dictionaries/novel/novelID`, { dict }); // TODO: Add novelID and novel name, find a way to fix this bs sourceTerm, targetTerm, sourceLanguage, targetLanguage
+    await axios.post(`${url}/`);
     setResponse(text);
   };
   return (

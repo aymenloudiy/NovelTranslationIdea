@@ -15,13 +15,7 @@ router.get("/novel/:novelId", async (req, res) => {
 router.post("/novel/:novelId", async (req, res) => {
   try {
     const { novelId } = req.params;
-    const {
-      chapterNumber,
-      chapterTitle,
-      translatedContent,
-      targetLanguage,
-      translatorName,
-    } = req.body;
+    const { chapterNumber, translatedContent, targetLanguage } = req.body;
 
     const novel = await Novel.findByPk(novelId);
     if (!novel) {
@@ -31,10 +25,8 @@ router.post("/novel/:novelId", async (req, res) => {
     const translation = await Translation.create({
       novelId,
       chapterNumber,
-      chapterTitle,
       translatedContent,
       targetLanguage,
-      translatorName,
     });
     res.status(201).json(translation);
   } catch (error) {
@@ -44,13 +36,7 @@ router.post("/novel/:novelId", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      chapterNumber,
-      chapterTitle,
-      translatedContent,
-      targetLanguage,
-      translatorName,
-    } = req.body;
+    const { chapterNumber, translatedContent, targetLanguage } = req.body;
 
     const translation = await Translation.findByPk(id);
     if (!translation) {
@@ -59,10 +45,8 @@ router.put("/:id", async (req, res) => {
 
     await translation.update({
       chapterNumber,
-      chapterTitle,
       translatedContent,
       targetLanguage,
-      translatorName,
     });
     res.json(translation);
   } catch (error) {
