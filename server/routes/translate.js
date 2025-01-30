@@ -53,14 +53,14 @@ router.post("/", async (req, res) => {
                - "raw_text": The Chinese text to translate.
     
             2. **Output**: Return a JSON object with:
-               - "updated_names": Include all existing and new translated names.
+               - "dictionary": Include all existing and new translated names.
                - "translated_text": Accurate English translation of "raw_text".
     
             3. **Guidelines**:
                - Use "names" for consistency in proper nouns and titles.
                - Translate idioms literally but maintain cultural expressions.
                - Ensure proper grammar and coherence in English.
-               - Add new names to "updated_names" without overwriting existing entries.
+               - Add new names to "dictionary" without overwriting existing entries.
     
             4. **Constraints**:
                - Do not add explanations or commentary.
@@ -70,13 +70,13 @@ router.post("/", async (req, res) => {
             5. **Example**:
             Input:
             {
-              "names": { "王小明": "Wang Xiaoming" },
-              "raw_text": "王小明走进了房间，并看到了李华。"
+              "dictionary": { "王小明": "Wang Xiaoming" },
+              "text": "王小明走进了房间，并看到了李华。"
             }
     
             Output:
             {
-              "updated_names": { "王小明": "Wang Xiaoming", "李华": "Li Hua" },
+              "dictionary": { "王小明": "Wang Xiaoming", "李华": "Li Hua" },
               "translated_text": "Wang Xiaoming walked into the room and saw Li Hua."
             }
             `,
