@@ -18,8 +18,6 @@ const Translation = sequelize.define("Translation", {
 const TranslationDictionary = sequelize.define("TranslationDictionary", {
   sourceTerm: { type: DataTypes.TEXT, allowNull: false },
   targetTerm: { type: DataTypes.TEXT, allowNull: false },
-  sourceLanguage: { type: DataTypes.TEXT, allowNull: false },
-  targetLanguage: { type: DataTypes.TEXT, allowNull: false },
 });
 
 Novel.hasMany(Translation, { onDelete: "CASCADE" });
