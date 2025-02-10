@@ -1,23 +1,23 @@
 export default function Terms() {
-  const _terms = {
-    term1: "translation1",
-    term2: "translation2",
-    term3: "translation3",
-    term4: "translation4",
-    term5: "translation5",
-    term6: "translation6",
-    term7: "translation7",
-    term8: "translation8",
-  };
-
+  const _terms = [
+    { novelId: "id1", term: "term1", translation: "translation1" },
+    { novelId: "id2", term: "term2", translation: "translation2" },
+    { novelId: "id3", term: "term3", translation: "translation3" },
+    { novelId: "id4", term: "term4", translation: "translation4" },
+    { novelId: "id5", term: "term5", translation: "translation5" },
+    { novelId: "id6", term: "term6", translation: "translation6" },
+    { novelId: "id7", term: "term7", translation: "translation7" },
+    { novelId: "id8", term: "term8", translation: "translation8" },
+  ];
   return (
     <>
       <div>
         <ul>
-          {Object.entries(_terms).map(([key, value]) => (
-            <li key={key}>
-              <div>{key}</div>
-              <div>{value}</div>
+          {_terms.map(({ novelId, term, translation }) => (
+            <li key={novelId}>
+              <div>{term}</div>
+              <div>{translation}</div>
+              <div></div>
             </li>
           ))}
         </ul>
