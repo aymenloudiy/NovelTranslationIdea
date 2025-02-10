@@ -19,14 +19,16 @@ export default function Chatbot() {
   };
   return (
     <>
-      <textarea
-        aria-label="novel chapter input"
-        value={value}
-        onChange={onChange}
-        id="message"
-        placeholder="Write your thoughts here..."
-      ></textarea>
-      <button onClick={handleSubmit}>Send</button>
+      <div>
+        <textarea
+          aria-label="novel chapter input"
+          value={value}
+          onChange={onChange}
+          id="message"
+          placeholder="Write your thoughts here..."
+        ></textarea>
+        <button onClick={handleSubmit}>Send</button>
+      </div>
     </>
   );
 }
