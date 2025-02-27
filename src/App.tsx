@@ -1,7 +1,12 @@
 import "./App.css";
+import MainContent from "./components/MainContent";
 
 function App() {
-  return <></>;
+  return (
+    <>
+      <MainContent></MainContent>
+    </>
+  );
 }
 
 export default App;
