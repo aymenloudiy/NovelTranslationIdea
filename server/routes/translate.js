@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 dotenv.config();
 
 const router = express.Router();
+
 const apiKey = process.env.OPEN_AI_KEY;
 if (!apiKey) {
   console.error("OpenAI API key is missing. Set OPEN_AI_KEY in the .env file.");
@@ -15,6 +16,12 @@ if (!apiKey) {
 
 const openai = new OpenAI({ apiKey });
 const MAX_TOKENS = 8192;
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+  message: { error: "Too many requests, please try again later." },
+});
 
 const estimateTokens = (text) => {
   const encoding = encoding_for_model("gpt-4o");
@@ -45,11 +52,9 @@ You are an expert translator specializing in translating Chinese web novels into
    - Do not expand ambiguous phrases unless explicit in the source.
    - Avoid grammatical errors and non-translatable terms (e.g., "iPhone" stays "iPhone").
 `;
-const limiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 5,
-  message: { error: "Too many requests, please try again later." },
-});
+
+const cachedSystemTokens = estimateTokens(systemMessage);
+
 router.post("/", limiter, async (req, res) => {
   const { question } = req.body;
   if (!question || typeof question !== "string") {
@@ -57,11 +62,12 @@ router.post("/", limiter, async (req, res) => {
       .status(400)
       .json({ error: "'question' is required and must be a string." });
   }
+
   try {
     const userTokens = estimateTokens(question);
     console.log(`User input tokens: ${userTokens}`);
-    const systemTokens = estimateTokens(systemMessage);
-    const remainingTokens = MAX_TOKENS - (systemTokens + userTokens);
+    const remainingTokens = MAX_TOKENS - (cachedSystemTokens + userTokens);
+
     if (remainingTokens <= 0) {
       return res
         .status(400)
@@ -75,14 +81,8 @@ router.post("/", limiter, async (req, res) => {
       {
         model: "gpt-4o",
         messages: [
-          {
-            role: "system",
-            content: systemMessage,
-          },
-          {
-            role: "user",
-            content: question,
-          },
+          { role: "system", content: systemMessage },
+          { role: "user", content: question },
         ],
         max_tokens: remainingTokens,
       },
@@ -90,6 +90,7 @@ router.post("/", limiter, async (req, res) => {
     );
 
     clearTimeout(timeout);
+
     res.json({
       success: true,
       data: response.choices[0].message.content,
