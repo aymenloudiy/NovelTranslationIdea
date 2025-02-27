@@ -2,6 +2,7 @@ import express from "express";
 import { OpenAI } from "openai";
 import { encoding_for_model } from "tiktoken";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
@@ -44,8 +45,12 @@ You are an expert translator specializing in translating Chinese web novels into
    - Do not expand ambiguous phrases unless explicit in the source.
    - Avoid grammatical errors and non-translatable terms (e.g., "iPhone" stays "iPhone").
 `;
-
-router.post("/", async (req, res) => {
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+  message: { error: "Too many requests, please try again later." },
+});
+router.post("/", limiter, async (req, res) => {
   const { question } = req.body;
   if (!question || typeof question !== "string") {
     return res
