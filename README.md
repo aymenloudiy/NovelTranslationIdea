@@ -1,50 +1,171 @@
-# React + TypeScript + Vite
+Here's a **README.md** for your **Novel Translator App**:
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+# 📖 Novel Translator App
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A **React-based web application** that uses **OpenAI's GPT-4o** to translate **Chinese web novels** into **English**, ensuring cultural accuracy and consistency. The backend is powered by **Express, Sequelize (SQLite), and OpenAI's API**.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 🚀 Features
 
-- Configure the top-level `parserOptions` property like this:
+- **📚 Novel Management** → Add, retrieve, and delete novels.
+- **🌎 AI-Powered Translation** → Uses OpenAI's `gpt-4o` to translate novel chapters.
+- **📖 Dictionary Integration** → Maintains translated terms for consistency.
+- **⚡ Rate Limiting** → Prevents excessive API usage.
+- **💾 SQLite Database** → Lightweight local storage.
+- **🔐 Secure API Key Handling** → Uses environment variables.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+---
+
+## 🛠️ Tech Stack
+
+### **Frontend**
+
+- **React 18**
+- **Vite** (Fast development server)
+- **Lucide-react** (Icon library)
+- **TailwindCSS** (For styling)
+
+### **Backend**
+
+- **Express** (Web framework)
+- **Sequelize** (ORM for SQLite)
+- **OpenAI API** (For AI translations)
+- **Tiktoken** (Token estimation for AI requests)
+- **Express Rate Limit** (Prevents API abuse)
+- **Dotenv** (Manages environment variables)
+
+---
+
+## 🏗️ Installation & Setup
+
+### **1️⃣ Clone the Repository**
+
+```sh
+git clone https://github.com/your-repo/noveltranslator.git
+cd noveltranslator
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### **2️⃣ Install Dependencies**
 
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
+```sh
+npm install
 ```
+
+### **3️⃣ Set Up Environment Variables**
+
+Create a `.env` file in the **root directory** and add:
+
+```sh
+OPEN_AI_KEY=your_openai_api_key
+PORT=8081
+```
+
+### **4️⃣ Run the Backend**
+
+```sh
+npm run dev
+```
+
+---
+
+## 📡 API Endpoints
+
+### **📝 Novels**
+
+| Method | Endpoint          | Description         |
+| ------ | ----------------- | ------------------- |
+| GET    | `/api/novels`     | Fetch all novels    |
+| GET    | `/api/novels/:id` | Fetch a novel by ID |
+| POST   | `/api/novels`     | Create a new novel  |
+| DELETE | `/api/novels/:id` | Delete a novel      |
+
+### **📖 Translations**
+
+| Method | Endpoint                           | Description                    |
+| ------ | ---------------------------------- | ------------------------------ |
+| GET    | `/api/translations/novel/:novelId` | Fetch translations for a novel |
+| POST   | `/api/translations/novel/:novelId` | Add a translation for a novel  |
+| PUT    | `/api/translations/:id`            | Update a translation           |
+| DELETE | `/api/translations/:id`            | Delete a translation           |
+
+### **📚 Dictionary**
+
+| Method | Endpoint                           | Description                        |
+| ------ | ---------------------------------- | ---------------------------------- |
+| GET    | `/api/dictionaries/novel/:novelId` | Get dictionary entries for a novel |
+| POST   | `/api/dictionaries/novel/:novelId` | Add a dictionary entry             |
+| PUT    | `/api/dictionaries/:id`            | Update a dictionary entry          |
+| DELETE | `/api/dictionaries/:id`            | Delete a dictionary entry          |
+
+### **🌍 AI Translation**
+
+| Method | Endpoint         | Description             |
+| ------ | ---------------- | ----------------------- |
+| POST   | `/api/translate` | Translate novel content |
+
+📌 **Note:** AI translation requires an **OpenAI API key**.
+
+---
+
+## 🔥 Deployment
+
+To deploy, use **Vercel, Netlify (for frontend), or a Node.js server like Render or DigitalOcean**.
+
+---
+
+## 🛡️ Security & Rate Limits
+
+- Uses **Express Rate Limit** → Prevents more than **5 translation requests per minute per IP**.
+- **API Key Handling** → Ensures OpenAI credentials are **not hardcoded**.
+
+---
+
+## 🛠️ Development Workflow
+
+### **Linting & Formatting**
+
+```sh
+npm run lint
+```
+
+### **Building for Production**
+
+```sh
+npm run build
+```
+
+### **Previewing Production Build**
+
+```sh
+npm run preview
+```
+
+---
+
+## 📌 Future Improvements
+
+- **🔍 Pagination** for large novel lists
+- **📜 Versioning** for translations
+- **🔗 Cloud database support** (e.g., PostgreSQL)
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo 🍴
+2. Create a new branch (`feature-xyz`) 🌱
+3. Commit your changes ✅
+4. Open a Pull Request! 🚀
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+🎉 **Enjoy translating your favorite novels!** 🚀📖
