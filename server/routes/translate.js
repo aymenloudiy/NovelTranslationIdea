@@ -6,9 +6,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const router = express.Router();
-const apiKey = process.env.OPEN_AI_KEY || "qwe123";
+const apiKey = process.env.OPEN_AI_KEY;
 if (!apiKey) {
-  throw new Error("OpenAI API key is not defined in environment variables.");
+  console.error("OpenAI API key is missing. Set OPEN_AI_KEY in the .env file.");
+  process.exit(1);
 }
 
 const openai = new OpenAI({ apiKey });
@@ -95,7 +96,16 @@ router.post("/", async (req, res) => {
         .json({ error: "Request timed out. Please try again later." });
     }
 
-    console.error("Error processing the OpenAI request:", error);
+    if (error.response) {
+      console.error(
+        "OpenAI API Error:",
+        error.response.status,
+        error.response.data
+      );
+    } else {
+      console.error("Unexpected Error:", error.message);
+    }
+
     res.status(500).json({
       error: "Failed to process the request. Please try again later.",
     });
