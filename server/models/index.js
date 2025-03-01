@@ -5,6 +5,8 @@ const sequelize = new Sequelize({
   logging: "false",
 });
 
+sequelize.query("PRAGMA journal_mode = WAL");
+
 const Novel = sequelize.define("Novel", {
   title: { type: DataTypes.TEXT, allowNull: false },
   language: { type: DataTypes.TEXT, allowNull: false },
