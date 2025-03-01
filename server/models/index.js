@@ -7,21 +7,33 @@ const sequelize = new Sequelize({
 
 sequelize.query("PRAGMA journal_mode = WAL");
 
-const Novel = sequelize.define("Novel", {
-  title: { type: DataTypes.TEXT, allowNull: false },
-  language: { type: DataTypes.TEXT, allowNull: false },
-});
+const Novel = sequelize.define(
+  "Novel",
+  {
+    title: { type: DataTypes.TEXT, allowNull: false },
+    language: { type: DataTypes.TEXT, allowNull: false },
+  },
+  { timestamps: true }
+);
 
-const Translation = sequelize.define("Translation", {
-  chapterNumber: { type: DataTypes.INTEGER, allowNull: false },
-  translatedContent: { type: DataTypes.TEXT, allowNull: false },
-  targetLanguage: { type: DataTypes.TEXT, allowNull: false },
-});
+const Translation = sequelize.define(
+  "Translation",
+  {
+    chapterNumber: { type: DataTypes.INTEGER, allowNull: false },
+    translatedContent: { type: DataTypes.TEXT, allowNull: false },
+    targetLanguage: { type: DataTypes.TEXT, allowNull: false },
+  },
+  { timestamps: true }
+);
 
-const TranslationDictionary = sequelize.define("TranslationDictionary", {
-  sourceTerm: { type: DataTypes.TEXT, allowNull: false },
-  targetTerm: { type: DataTypes.TEXT, allowNull: false },
-});
+const TranslationDictionary = sequelize.define(
+  "TranslationDictionary",
+  {
+    sourceTerm: { type: DataTypes.TEXT, allowNull: false },
+    targetTerm: { type: DataTypes.TEXT, allowNull: false },
+  },
+  { timestamps: true }
+);
 
 Novel.hasMany(Translation, { onDelete: "CASCADE" });
 Translation.belongsTo(Novel);
