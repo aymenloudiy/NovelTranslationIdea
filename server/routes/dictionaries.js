@@ -1,18 +1,32 @@
 import express from "express";
 import { TranslationDictionary, Novel } from "../models/index.js";
+import { body, validationResult, query } from "express-validator";
 
 const router = express.Router();
-router.get("/novel/:novelId", async (req, res) => {
-  try {
-    const { novelId } = req.params;
-    const dictionary = await TranslationDictionary.findAll({
-      where: { novelId },
-    });
-    res.json(dictionary);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch dictionary entries" });
+
+router.get(
+  "/novel/:novelId",
+  query("limit").optional().isInt({ min: 1 }).toInt(),
+  query("offset").optional().isInt({ min: 0 }).toInt(),
+  async (req, res) => {
+    try {
+      const { novelId } = req.params;
+      const limit = req.query.limit || 10;
+      const offset = req.query.offset || 0;
+
+      const dictionary = await TranslationDictionary.findAll({
+        where: { novelId },
+        limit,
+        offset,
+        order: [["sourceTerm", "ASC"]],
+      });
+
+      res.json(dictionary);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch dictionary entries" });
+    }
   }
-});
+);
 router.post("/novel/:novelId", async (req, res) => {
   try {
     const { novelId } = req.params;
