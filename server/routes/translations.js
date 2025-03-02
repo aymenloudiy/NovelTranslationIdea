@@ -73,26 +73,65 @@ router.post(
     }
   }
 );
-router.put("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { chapterNumber, translatedContent, targetLanguage } = req.body;
-
-    const translation = await Translation.findByPk(id);
-    if (!translation) {
-      return res.status(404).json({ error: "Translation not found" });
+router.put(
+  "/:id",
+  [
+    body("chapterNumber")
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage("Chapter number must be a positive integer"),
+    body("translatedContent")
+      .optional()
+      .notEmpty()
+      .withMessage("Translated content cannot be empty"),
+    body("targetLanguage")
+      .optional()
+      .notEmpty()
+      .withMessage("Target language cannot be empty"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
+    try {
+      const { id } = req.params;
+      const { chapterNumber, translatedContent, targetLanguage } = req.body;
 
-    await translation.update({
-      chapterNumber,
-      translatedContent,
-      targetLanguage,
-    });
-    res.json(translation);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update translation" });
+      const translation = await Translation.findByPk(id);
+      if (!translation) {
+        return res.status(404).json({ error: "Translation not found" });
+      }
+      if (chapterNumber || targetLanguage) {
+        const duplicate = await Translation.findOne({
+          where: {
+            novelId: translation.novelId,
+            chapterNumber: chapterNumber || translation.chapterNumber,
+            targetLanguage: targetLanguage || translation.targetLanguage,
+          },
+        });
+
+        if (duplicate && duplicate.id !== id) {
+          return res.status(400).json({
+            error: `Chapter ${
+              chapterNumber || translation.chapterNumber
+            } already has a translation in ${
+              targetLanguage || translation.targetLanguage
+            }.`,
+          });
+        }
+      }
+      await translation.update({
+        chapterNumber,
+        translatedContent,
+        targetLanguage,
+      });
+      res.json(translation);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update translation" });
+    }
   }
-});
+);
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
