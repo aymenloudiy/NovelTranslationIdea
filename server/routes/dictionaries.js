@@ -87,27 +87,75 @@ router.post(
     }
   }
 );
-router.put("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { sourceTerm, targetTerm, sourceLanguage, targetLanguage } = req.body;
-
-    const entry = await TranslationDictionary.findByPk(id);
-    if (!entry) {
-      return res.status(404).json({ error: "Dictionary entry not found" });
+router.put(
+  "/:id",
+  [
+    body("sourceTerm")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Source term cannot be empty"),
+    body("targetTerm")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Target term cannot be empty"),
+    body("sourceLanguage")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Source language cannot be empty"),
+    body("targetLanguage")
+      .optional()
+      .trim()
+      .notEmpty()
+      .withMessage("Target language cannot be empty"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    await entry.update({
-      sourceTerm,
-      targetTerm,
-      sourceLanguage,
-      targetLanguage,
-    });
-    res.json(entry);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update dictionary entry" });
+    try {
+      const { id } = req.params;
+      const { sourceTerm, targetTerm } = req.body;
+
+      const entry = await TranslationDictionary.findByPk(id);
+      if (!entry) {
+        return res.status(404).json({ error: "Dictionary entry not found" });
+      }
+
+      if (
+        sourceTerm &&
+        targetTerm &&
+        sourceTerm.toLowerCase() === targetTerm.toLowerCase()
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Source term and target term cannot be the same" });
+      }
+
+      if (sourceTerm) {
+        const duplicate = await TranslationDictionary.findOne({
+          where: { novelId: entry.novelId, sourceTerm },
+        });
+
+        if (duplicate && duplicate.id !== id) {
+          return res.status(400).json({
+            error: `The term "${sourceTerm}" already exists in this novel's dictionary.`,
+          });
+        }
+      }
+
+      await entry.update(req.body);
+      res.json(entry);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update dictionary entry" });
+    }
   }
-});
+);
+
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
