@@ -27,28 +27,66 @@ router.get(
     }
   }
 );
-router.post("/novel/:novelId", async (req, res) => {
-  try {
-    const { novelId } = req.params;
-    const { sourceTerm, targetTerm, sourceLanguage, targetLanguage } = req.body;
-
-    const novel = await Novel.findByPk(novelId);
-    if (!novel) {
-      return res.status(404).json({ error: "Novel not found" });
+router.post(
+  "/novel/:novelId",
+  [
+    body("sourceTerm").trim().notEmpty().withMessage("Source term is required"),
+    body("targetTerm").trim().notEmpty().withMessage("Target term is required"),
+    body("sourceLanguage")
+      .trim()
+      .notEmpty()
+      .withMessage("Source language is required"),
+    body("targetLanguage")
+      .trim()
+      .notEmpty()
+      .withMessage("Target language is required"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    const entry = await TranslationDictionary.create({
-      novelId,
-      sourceTerm,
-      targetTerm,
-      sourceLanguage,
-      targetLanguage,
-    });
-    res.status(201).json(entry);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create dictionary entry" });
+    try {
+      const { novelId } = req.params;
+      const { sourceTerm, targetTerm, sourceLanguage, targetLanguage } =
+        req.body;
+
+      const novel = await Novel.findByPk(novelId);
+      if (!novel) {
+        return res.status(404).json({ error: "Novel not found" });
+      }
+
+      if (sourceTerm.toLowerCase() === targetTerm.toLowerCase()) {
+        return res
+          .status(400)
+          .json({ error: "Source term and target term cannot be the same" });
+      }
+
+      const existingEntry = await TranslationDictionary.findOne({
+        where: { novelId, sourceTerm },
+      });
+
+      if (existingEntry) {
+        return res.status(400).json({
+          error: `The term "${sourceTerm}" already exists in this novel's dictionary.`,
+        });
+      }
+
+      const entry = await TranslationDictionary.create({
+        novelId,
+        sourceTerm,
+        targetTerm,
+        sourceLanguage,
+        targetLanguage,
+      });
+
+      res.status(201).json(entry);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create dictionary entry" });
+    }
   }
-});
+);
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
