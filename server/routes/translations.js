@@ -1,44 +1,21 @@
 import express from "express";
 import { Translation, Novel } from "../models/index.js";
 import { body, validationResult, query } from "express-validator";
-import { OpenAI } from "openai";
-import dotenv from "dotenv";
 
-dotenv.config();
 const router = express.Router();
-const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY });
-
-// 🚀 Auto-Detect Language Function
-const detectLanguage = async (text) => {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: [
-      { role: "system", content: "Detect the language of this text:" },
-      { role: "user", content: text },
-    ],
-    max_tokens: 5,
-  });
-
-  return response.choices[0].message.content.trim();
-};
 
 router.get(
   "/novel/:novelId",
   query("limit").optional().isInt({ min: 1 }).toInt(),
   query("offset").optional().isInt({ min: 0 }).toInt(),
-  query("targetLanguage").optional().isString(),
   async (req, res) => {
     try {
       const { novelId } = req.params;
-      const { targetLanguage, limit = 10, offset = 0 } = req.query;
-
-      const whereClause = { novelId };
-      if (targetLanguage) {
-        whereClause.targetLanguage = targetLanguage;
-      }
+      const limit = req.query.limit || 10;
+      const offset = req.query.offset || 0;
 
       const translations = await Translation.findAll({
-        where: whereClause,
+        where: { novelId },
         limit,
         offset,
         order: [["chapterNumber", "ASC"]],
@@ -63,51 +40,111 @@ router.post(
     body("targetLanguage")
       .notEmpty()
       .withMessage("Target language is required"),
-    body("sourceLanguage").optional().isString(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
     try {
       const { novelId } = req.params;
-      let { chapterNumber, translatedContent, targetLanguage, sourceLanguage } =
-        req.body;
-
+      const { chapterNumber, translatedContent, targetLanguage } = req.body;
       const novel = await Novel.findByPk(novelId);
       if (!novel) {
         return res.status(404).json({ error: "Novel not found" });
       }
-
-      if (!sourceLanguage) {
-        sourceLanguage = await detectLanguage(translatedContent);
-      }
-
       const existingTranslation = await Translation.findOne({
         where: { novelId, chapterNumber, targetLanguage },
       });
-
       if (existingTranslation) {
         return res.status(400).json({
-          error: `Chapter ${chapterNumber} is already translated into ${targetLanguage}.`,
+          error: `Chapter ${chapterNumber} already has a translation in ${targetLanguage}.`,
         });
       }
-
       const translation = await Translation.create({
         novelId,
         chapterNumber,
         translatedContent,
-        sourceLanguage,
         targetLanguage,
       });
-
       res.status(201).json(translation);
     } catch (error) {
       res.status(500).json({ error: "Failed to create translation" });
     }
   }
 );
+router.put(
+  "/:id",
+  [
+    body("chapterNumber")
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage("Chapter number must be a positive integer"),
+    body("translatedContent")
+      .optional()
+      .notEmpty()
+      .withMessage("Translated content cannot be empty"),
+    body("targetLanguage")
+      .optional()
+      .notEmpty()
+      .withMessage("Target language cannot be empty"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const { id } = req.params;
+      const { chapterNumber, translatedContent, targetLanguage } = req.body;
+
+      const translation = await Translation.findByPk(id);
+      if (!translation) {
+        return res.status(404).json({ error: "Translation not found" });
+      }
+      if (chapterNumber || targetLanguage) {
+        const duplicate = await Translation.findOne({
+          where: {
+            novelId: translation.novelId,
+            chapterNumber: chapterNumber || translation.chapterNumber,
+            targetLanguage: targetLanguage || translation.targetLanguage,
+          },
+        });
+
+        if (duplicate && duplicate.id !== id) {
+          return res.status(400).json({
+            error: `Chapter ${
+              chapterNumber || translation.chapterNumber
+            } already has a translation in ${
+              targetLanguage || translation.targetLanguage
+            }.`,
+          });
+        }
+      }
+      await translation.update({
+        chapterNumber,
+        translatedContent,
+        targetLanguage,
+      });
+      res.json(translation);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update translation" });
+    }
+  }
+);
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const translation = await Translation.findByPk(id);
+    if (!translation) {
+      return res.status(404).json({ error: "Translation not found" });
+    }
+
+    await translation.destroy();
+    res.json({ message: "Translation deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete translation" });
+  }
+});
 
 export default router;
