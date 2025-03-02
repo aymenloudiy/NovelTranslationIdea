@@ -1,5 +1,6 @@
 import express from "express";
 import { Novel } from "../models/index.js";
+import { body, validationResult, query } from "express-validator";
 const router = express.Router();
 
 router.get(
@@ -33,15 +34,38 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch novel" });
   }
 });
-router.post("/", async (req, res) => {
-  try {
-    const { title, genre, language } = req.body;
-    const novel = await Novel.create({ title, genre, language });
-    res.status(201).json(novel);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create novel" });
+router.post(
+  "/",
+  [
+    body("title").trim().notEmpty().withMessage("Title is required"),
+    body("language").trim().notEmpty().withMessage("Language is required"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { title, language } = req.body;
+      const normalizedTitle = title.toLowerCase();
+
+      const existing = await Novel.findOne({
+        where: { title: normalizedTitle },
+      });
+      if (existing) {
+        return res
+          .status(400)
+          .json({ error: "A novel with this title already exists" });
+      }
+
+      const novel = await Novel.create({ title: normalizedTitle, language });
+      res.status(201).json(novel);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create novel" });
+    }
   }
-});
+);
 router.delete("/:id", async (req, res) => {
   try {
     const novel = await Novel.findByPk(req.params.id);
