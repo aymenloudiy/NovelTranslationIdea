@@ -1,11 +1,12 @@
 import { Sequelize, DataTypes } from "sequelize";
+
 const sequelize = new Sequelize({
   dialect: "sqlite",
   storage: "./database.sqlite",
-  logging: "false",
+  logging: false,
 });
 
-sequelize.query("PRAGMA journal_mode = WAL");
+sequelize.query("PRAGMA journal_mode = WAL;");
 
 const Novel = sequelize.define(
   "Novel",
@@ -25,23 +26,27 @@ const Translation = sequelize.define(
       validate: { min: 1 },
     },
     translatedContent: { type: DataTypes.TEXT, allowNull: false },
+    sourceLanguage: { type: DataTypes.TEXT, allowNull: false },
     targetLanguage: { type: DataTypes.TEXT, allowNull: false },
   },
   { timestamps: true }
 );
+
 Translation.addHook("beforeValidate", async (translation) => {
   const existing = await Translation.findOne({
     where: {
       novelId: translation.novelId,
       chapterNumber: translation.chapterNumber,
+      targetLanguage: translation.targetLanguage,
     },
   });
   if (existing && translation.id !== existing.id) {
     throw new Error(
-      `Chapter ${translation.chapterNumber} already exists for this novel.`
+      `Chapter ${translation.chapterNumber} already exists for this novel in ${translation.targetLanguage}.`
     );
   }
 });
+
 const TranslationDictionary = sequelize.define(
   "TranslationDictionary",
   {
@@ -52,16 +57,23 @@ const TranslationDictionary = sequelize.define(
   },
   { timestamps: true }
 );
+
 TranslationDictionary.addHook("beforeValidate", async (entry) => {
   const existing = await TranslationDictionary.findOne({
-    where: { novelId: entry.novelId, sourceTerm: entry.sourceTerm },
+    where: {
+      novelId: entry.novelId,
+      sourceTerm: entry.sourceTerm,
+      sourceLanguage: entry.sourceLanguage,
+      targetLanguage: entry.targetLanguage,
+    },
   });
   if (existing && entry.id !== existing.id) {
     throw new Error(
-      `Term "${entry.sourceTerm}" already exists in this novel's dictionary.`
+      `Term "${entry.sourceTerm}" already exists for ${entry.sourceLanguage} → ${entry.targetLanguage}.`
     );
   }
 });
+
 Novel.hasMany(Translation, { onDelete: "CASCADE" });
 Translation.belongsTo(Novel);
 
