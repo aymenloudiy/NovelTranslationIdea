@@ -1,171 +1,245 @@
-Here's a **README.md** for your **Novel Translator App**:
+# Novel Translation API
+
+This API allows users to translate novels into multiple languages, automatically detects the source language, and manages a translation dictionary for consistent name and term translations.
 
 ---
 
-# 📖 Novel Translator App
+## Features
 
-A **React-based web application** that uses **OpenAI's GPT-4o** to translate **Chinese web novels** into **English**, ensuring cultural accuracy and consistency. The backend is powered by **Express, Sequelize (SQLite), and OpenAI's API**.
-
----
-
-## 🚀 Features
-
-- **📚 Novel Management** → Add, retrieve, and delete novels.
-- **🌎 AI-Powered Translation** → Uses OpenAI's `gpt-4o` to translate novel chapters.
-- **📖 Dictionary Integration** → Maintains translated terms for consistency.
-- **⚡ Rate Limiting** → Prevents excessive API usage.
-- **💾 SQLite Database** → Lightweight local storage.
-- **🔐 Secure API Key Handling** → Uses environment variables.
+- Multi-Language Support → Translate between any language pair.
+- Auto-Detects Source Language → No need for manual selection.
+- Novel & Chapter Management → Store translations per novel & chapter.
+- Translation Dictionary → Ensures consistency in translated names and terms.
+- Optimized for Speed & Cost → Uses a single OpenAI API call for both translation & detection.
+- Rate Limiting → Prevents API abuse.
 
 ---
 
-## 🛠️ Tech Stack
+## Folder Structure
 
-### **Frontend**
-
-- **React 18**
-- **Vite** (Fast development server)
-- **Lucide-react** (Icon library)
-- **TailwindCSS** (For styling)
-
-### **Backend**
-
-- **Express** (Web framework)
-- **Sequelize** (ORM for SQLite)
-- **OpenAI API** (For AI translations)
-- **Tiktoken** (Token estimation for AI requests)
-- **Express Rate Limit** (Prevents API abuse)
-- **Dotenv** (Manages environment variables)
+```
+/noveltranslatoridea
+│── models/                   # Sequelize models (DB schema)
+│── routes/                   # API endpoints
+│   ├── novels.js             # Novel management
+│   ├── translations.js       # Handles translations (CRUD)
+│   ├── dictionaries.js       # Manages dictionary terms
+│   ├── translate.js          # Calls OpenAI for translation & detection
+│── database.sqlite           # SQLite database
+│── app.js                    # Express app entry point
+│── package.json              # Dependencies & scripts
+│── README.md                 # Documentation
+```
 
 ---
 
-## 🏗️ Installation & Setup
+## Installation & Setup
 
-### **1️⃣ Clone the Repository**
+### 1. Clone the Repository
 
 ```sh
 git clone https://github.com/your-repo/noveltranslator.git
 cd noveltranslator
 ```
 
-### **2️⃣ Install Dependencies**
+### 2. Install Dependencies
 
 ```sh
 npm install
 ```
 
-### **3️⃣ Set Up Environment Variables**
+### 3. Set Up Environment Variables
 
-Create a `.env` file in the **root directory** and add:
+Create a `.env` file and add your OpenAI API key:
 
-```sh
-OPEN_AI_KEY=your_openai_api_key
+```ini
+OPEN_AI_KEY=your-api-key-here
 PORT=8081
 ```
 
-### **4️⃣ Run the Backend**
+### 4. Run the Server
 
 ```sh
-npm run dev
+npm start
+```
+
+Server runs on: `http://localhost:8081`
+
+---
+
+## API Endpoints
+
+### Novels
+
+| Method   | Endpoint          | Description          |
+| -------- | ----------------- | -------------------- |
+| `GET`    | `/api/novels`     | Get all novels       |
+| `GET`    | `/api/novels/:id` | Get a specific novel |
+| `POST`   | `/api/novels`     | Create a new novel   |
+| `DELETE` | `/api/novels/:id` | Delete a novel       |
+
+#### Example Request (Create Novel)
+
+```json
+{
+  "title": "Solo Leveling",
+  "language": "Korean"
+}
 ```
 
 ---
 
-## 📡 API Endpoints
+### Translations
 
-### **📝 Novels**
+| Method | Endpoint                           | Description                  |
+| ------ | ---------------------------------- | ---------------------------- |
+| `GET`  | `/api/translations/novel/:novelId` | Get translations for a novel |
+| `POST` | `/api/translations/novel/:novelId` | Add a new translation        |
 
-| Method | Endpoint          | Description         |
-| ------ | ----------------- | ------------------- |
-| GET    | `/api/novels`     | Fetch all novels    |
-| GET    | `/api/novels/:id` | Fetch a novel by ID |
-| POST   | `/api/novels`     | Create a new novel  |
-| DELETE | `/api/novels/:id` | Delete a novel      |
+#### Example Request (Add Translation)
 
-### **📖 Translations**
-
-| Method | Endpoint                           | Description                    |
-| ------ | ---------------------------------- | ------------------------------ |
-| GET    | `/api/translations/novel/:novelId` | Fetch translations for a novel |
-| POST   | `/api/translations/novel/:novelId` | Add a translation for a novel  |
-| PUT    | `/api/translations/:id`            | Update a translation           |
-| DELETE | `/api/translations/:id`            | Delete a translation           |
-
-### **📚 Dictionary**
-
-| Method | Endpoint                           | Description                        |
-| ------ | ---------------------------------- | ---------------------------------- |
-| GET    | `/api/dictionaries/novel/:novelId` | Get dictionary entries for a novel |
-| POST   | `/api/dictionaries/novel/:novelId` | Add a dictionary entry             |
-| PUT    | `/api/dictionaries/:id`            | Update a dictionary entry          |
-| DELETE | `/api/dictionaries/:id`            | Delete a dictionary entry          |
-
-### **🌍 AI Translation**
-
-| Method | Endpoint         | Description             |
-| ------ | ---------------- | ----------------------- |
-| POST   | `/api/translate` | Translate novel content |
-
-📌 **Note:** AI translation requires an **OpenAI API key**.
-
----
-
-## 🔥 Deployment
-
-To deploy, use **Vercel, Netlify (for frontend), or a Node.js server like Render or DigitalOcean**.
-
----
-
-## 🛡️ Security & Rate Limits
-
-- Uses **Express Rate Limit** → Prevents more than **5 translation requests per minute per IP**.
-- **API Key Handling** → Ensures OpenAI credentials are **not hardcoded**.
-
----
-
-## 🛠️ Development Workflow
-
-### **Linting & Formatting**
-
-```sh
-npm run lint
-```
-
-### **Building for Production**
-
-```sh
-npm run build
-```
-
-### **Previewing Production Build**
-
-```sh
-npm run preview
+```json
+{
+  "chapterNumber": 1,
+  "translatedContent": "The hunter walked into the dungeon...",
+  "sourceLanguage": "Korean",
+  "targetLanguage": "English"
+}
 ```
 
 ---
 
-## 📌 Future Improvements
+### Translation API (Main Endpoint)
 
-- **🔍 Pagination** for large novel lists
-- **📜 Versioning** for translations
-- **🔗 Cloud database support** (e.g., PostgreSQL)
+| Method | Endpoint         | Description                           |
+| ------ | ---------------- | ------------------------------------- |
+| `POST` | `/api/translate` | Translate text & auto-detect language |
+
+#### Example Request
+
+```json
+{
+  "novelId": 1,
+  "chapterNumber": 2,
+  "targetLanguage": "English",
+  "raw_text": "主人公进入了地下城。",
+  "dictionary": { "主人公": "protagonist" }
+}
+```
+
+#### Example Response
+
+```json
+{
+  "success": true,
+  "translated_text": "The protagonist entered the dungeon.",
+  "detected_source_language": "Chinese",
+  "dictionary": { "主人公": "protagonist", "地下城": "dungeon" },
+  "chapterNumber": 2
+}
+```
 
 ---
 
-## 🤝 Contributing
+### Dictionary API
 
-1. Fork the repo 🍴
-2. Create a new branch (`feature-xyz`) 🌱
-3. Commit your changes ✅
-4. Open a Pull Request! 🚀
+| Method   | Endpoint                           | Description                |
+| -------- | ---------------------------------- | -------------------------- |
+| `GET`    | `/api/dictionaries/novel/:novelId` | Get dictionary for a novel |
+| `POST`   | `/api/dictionaries/novel/:novelId` | Add a new term             |
+| `PUT`    | `/api/dictionaries/:id`            | Update a dictionary term   |
+| `DELETE` | `/api/dictionaries/:id`            | Delete a term              |
+
+#### Example Request (Add Dictionary Entry)
+
+```json
+{
+  "sourceTerm": "猎人",
+  "targetTerm": "hunter",
+  "sourceLanguage": "Chinese",
+  "targetLanguage": "English"
+}
+```
 
 ---
 
-## 📄 License
+## Technologies Used
 
-This project is licensed under the **MIT License**.
+- Node.js + Express.js → Backend
+- Sequelize + SQLite → Database
+- OpenAI API → Language Translation
+- Rate Limiting (express-rate-limit) → API Protection
 
 ---
 
-🎉 **Enjoy translating your favorite novels!** 🚀📖
+## FAQ
+
+### 1. How does the translation API detect languages?
+
+- OpenAI automatically detects the source language and includes it in the response.
+
+### 2. Can I translate to multiple languages?
+
+- Yes, simply change `"targetLanguage"` in the request.
+
+### 3. How does the dictionary work?
+
+- The dictionary ensures names and terms stay consistent across translations.
+
+### 4. What happens if I translate the same chapter twice?
+
+- The API prevents duplicate translations for the same chapter and language.
+
+---
+
+## Future Improvements
+
+- Support for additional translation models
+- Advanced dictionary term suggestions
+- User authentication for API access
+
+---
+
+## Contributing
+
+Pull requests are welcome! To contribute:
+
+1. Fork the repository
+2. Create a new branch
+3. Make your changes
+4. Submit a pull request
+
+---
+
+## License
+
+This project is MIT Licensed.
+
+## Technologies Used
+
+### Backend
+
+- Node.js + Express.js → Server-side framework for handling API requests
+- Sequelize + SQLite → ORM for database management
+
+### AI & Language Processing
+
+- OpenAI API → Handles text translation and language detection
+- tiktoken → Token estimation for OpenAI API efficiency
+
+### API Security & Optimization
+
+- express-rate-limit → Protects the API from abuse by limiting requests
+- dotenv → Manages environment variables securely
+
+### Frontend Dependencies (if applicable)
+
+- React + React DOM → Frontend framework for UI rendering
+- Lucide React → Icon library for UI components
+
+### Development & Tooling
+
+- Vite → Development server for fast frontend builds
+- TypeScript → Enhances JavaScript with static typing (used in build process)
+- ESLint → Enforces code quality and best practices
+- PostCSS + TailwindCSS → Stylesheets for modern UI design
