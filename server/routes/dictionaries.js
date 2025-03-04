@@ -8,14 +8,24 @@ router.get(
   "/novel/:novelId",
   query("limit").optional().isInt({ min: 1 }).toInt(),
   query("offset").optional().isInt({ min: 0 }).toInt(),
+  query("sourceLanguage").optional().isString(),
+  query("targetLanguage").optional().isString(),
   async (req, res) => {
     try {
       const { novelId } = req.params;
-      const limit = req.query.limit || 10;
-      const offset = req.query.offset || 0;
+      const {
+        sourceLanguage,
+        targetLanguage,
+        limit = 10,
+        offset = 0,
+      } = req.query;
+
+      const whereClause = { novelId };
+      if (sourceLanguage) whereClause.sourceLanguage = sourceLanguage;
+      if (targetLanguage) whereClause.targetLanguage = targetLanguage;
 
       const dictionary = await TranslationDictionary.findAll({
-        where: { novelId },
+        where: whereClause,
         limit,
         offset,
         order: [["sourceTerm", "ASC"]],
@@ -27,17 +37,16 @@ router.get(
     }
   }
 );
+
 router.post(
   "/novel/:novelId",
   [
     body("sourceTerm").trim().notEmpty().withMessage("Source term is required"),
     body("targetTerm").trim().notEmpty().withMessage("Target term is required"),
     body("sourceLanguage")
-      .trim()
       .notEmpty()
       .withMessage("Source language is required"),
     body("targetLanguage")
-      .trim()
       .notEmpty()
       .withMessage("Target language is required"),
   ],
@@ -57,19 +66,13 @@ router.post(
         return res.status(404).json({ error: "Novel not found" });
       }
 
-      if (sourceTerm.toLowerCase() === targetTerm.toLowerCase()) {
-        return res
-          .status(400)
-          .json({ error: "Source term and target term cannot be the same" });
-      }
-
       const existingEntry = await TranslationDictionary.findOne({
-        where: { novelId, sourceTerm },
+        where: { novelId, sourceTerm, sourceLanguage, targetLanguage },
       });
 
       if (existingEntry) {
         return res.status(400).json({
-          error: `The term "${sourceTerm}" already exists in this novel's dictionary.`,
+          error: `The term "${sourceTerm}" already exists for ${sourceLanguage} → ${targetLanguage}.`,
         });
       }
 
@@ -87,6 +90,7 @@ router.post(
     }
   }
 );
+
 router.put(
   "/:id",
   [
@@ -102,14 +106,12 @@ router.put(
       .withMessage("Target term cannot be empty"),
     body("sourceLanguage")
       .optional()
-      .trim()
       .notEmpty()
-      .withMessage("Source language cannot be empty"),
+      .withMessage("Source language is required"),
     body("targetLanguage")
       .optional()
-      .trim()
       .notEmpty()
-      .withMessage("Target language cannot be empty"),
+      .withMessage("Target language is required"),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -119,31 +121,27 @@ router.put(
 
     try {
       const { id } = req.params;
-      const { sourceTerm, targetTerm } = req.body;
+      const { sourceTerm, targetTerm, sourceLanguage, targetLanguage } =
+        req.body;
 
       const entry = await TranslationDictionary.findByPk(id);
       if (!entry) {
         return res.status(404).json({ error: "Dictionary entry not found" });
       }
 
-      if (
-        sourceTerm &&
-        targetTerm &&
-        sourceTerm.toLowerCase() === targetTerm.toLowerCase()
-      ) {
-        return res
-          .status(400)
-          .json({ error: "Source term and target term cannot be the same" });
-      }
-
-      if (sourceTerm) {
+      if (sourceTerm || sourceLanguage || targetLanguage) {
         const duplicate = await TranslationDictionary.findOne({
-          where: { novelId: entry.novelId, sourceTerm },
+          where: {
+            novelId: entry.novelId,
+            sourceTerm: sourceTerm || entry.sourceTerm,
+            sourceLanguage: sourceLanguage || entry.sourceLanguage,
+            targetLanguage: targetLanguage || entry.targetLanguage,
+          },
         });
 
         if (duplicate && duplicate.id !== id) {
           return res.status(400).json({
-            error: `The term "${sourceTerm}" already exists in this novel's dictionary.`,
+            error: `The term "${sourceTerm}" already exists for ${sourceLanguage} → ${targetLanguage}.`,
           });
         }
       }
