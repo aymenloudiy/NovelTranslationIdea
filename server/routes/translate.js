@@ -54,8 +54,6 @@ router.post(
       .withMessage("Dictionary must be an object."),
   ],
   async (req, res) => {
-    console.log("Request body received:", req.body);
-    console.log("Extracted novelId:", req.body.novelId);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -117,7 +115,6 @@ router.post(
       const translatedText = aiResponse.translated_text;
       const detectedSourceLanguage = aiResponse.detected_source_language;
       const updatedDictionary = aiResponse.dictionary;
-      console.log(novelId);
 
       const translation = await Translation.create({
         novelId: novelId,
@@ -126,7 +123,6 @@ router.post(
         sourceLanguage: detectedSourceLanguage,
         targetLanguage,
       });
-      console.log("Created Translation:", translation.toJSON());
       for (const [sourceTerm, targetTerm] of Object.entries(
         updatedDictionary
       )) {
@@ -136,15 +132,6 @@ router.post(
           );
           continue;
         }
-
-        console.log(
-          "Creating dictionary entry for:",
-          sourceTerm,
-          "->",
-          targetTerm,
-          "novelId:",
-          novelId
-        );
 
         const existingEntry = await TranslationDictionary.findOne({
           where: {
@@ -163,10 +150,6 @@ router.post(
             sourceLanguage: detectedSourceLanguage,
             targetLanguage,
           });
-
-          console.log(
-            `Added dictionary entry for ${sourceTerm} -> ${targetTerm} under novelId: ${novelId}`
-          );
         }
       }
 

@@ -41,8 +41,6 @@ const Translation = sequelize.define(
 );
 
 Translation.addHook("beforeValidate", async (translation) => {
-  console.log("Received Translation in Hook:", translation.toJSON());
-
   const existing = await Translation.findOne({
     where: {
       novelId: translation.novelId,
@@ -77,8 +75,6 @@ const TranslationDictionary = sequelize.define(
 );
 
 TranslationDictionary.addHook("beforeValidate", async (entry) => {
-  console.log("Received Dictionary Entry in Hook:", entry.toJSON());
-
   if (!entry.novelId) {
     console.error("Error: novelId is missing before dictionary validation.");
     throw new Error("Novel ID is required for dictionary entries.");
