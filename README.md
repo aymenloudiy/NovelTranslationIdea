@@ -232,7 +232,7 @@ This project is MIT Licensed.
 - express-rate-limit → Protects the API from abuse by limiting requests
 - dotenv → Manages environment variables securely
 
-### Frontend Dependencies (if applicable)
+### Frontend Dependencies
 
 - React + React DOM → Frontend framework for UI rendering
 - Lucide React → Icon library for UI components
