@@ -40,21 +40,6 @@ const Translation = sequelize.define(
   { timestamps: true }
 );
 
-Translation.addHook("beforeValidate", async (translation) => {
-  const existing = await Translation.findOne({
-    where: {
-      novelId: translation.novelId,
-      chapterNumber: translation.chapterNumber,
-      targetLanguage: translation.targetLanguage,
-    },
-  });
-  if (existing && translation.id !== existing.id) {
-    throw new Error(
-      `Chapter ${translation.chapterNumber} already exists for this novel in ${translation.targetLanguage}.`
-    );
-  }
-});
-
 const TranslationDictionary = sequelize.define(
   "TranslationDictionary",
   {
@@ -95,10 +80,16 @@ TranslationDictionary.addHook("beforeValidate", async (entry) => {
   }
 });
 
-Novel.hasMany(Translation, { onDelete: "CASCADE" });
-Translation.belongsTo(Novel);
+Novel.hasMany(Translation, { foreignKey: "novelId", onDelete: "CASCADE" });
+Translation.belongsTo(Novel, { foreignKey: "novelId", onDelete: "CASCADE" });
 
-Novel.hasMany(TranslationDictionary, { onDelete: "CASCADE" });
-TranslationDictionary.belongsTo(Novel);
+Novel.hasMany(TranslationDictionary, {
+  foreignKey: "novelId",
+  onDelete: "CASCADE",
+});
+TranslationDictionary.belongsTo(Novel, {
+  foreignKey: "novelId",
+  onDelete: "CASCADE",
+});
 
 export { sequelize, Novel, Translation, TranslationDictionary };
