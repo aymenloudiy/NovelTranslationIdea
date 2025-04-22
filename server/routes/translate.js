@@ -72,9 +72,7 @@ router.post(
       if (!novel) {
         return res.status(404).json({ error: "Novel not found." });
       }
-
       let finalChapterNumber = chapterNumber;
-
       if (!chapterNumber) {
         const lastChapter = await Translation.findOne({
           where: { novelId },
@@ -82,6 +80,19 @@ router.post(
         });
 
         finalChapterNumber = lastChapter ? lastChapter.chapterNumber + 1 : 1;
+      }
+      const existing = await Translation.findOne({
+        where: {
+          novelId,
+          chapterNumber: finalChapterNumber,
+          targetLanguage,
+        },
+      });
+
+      if (existing) {
+        return res.status(409).json({
+          error: `Chapter ${finalChapterNumber} already exists for this novel in ${targetLanguage}.`,
+        });
       }
 
       const userTokens = estimateTokens(raw_text);
