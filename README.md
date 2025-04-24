@@ -10,6 +10,8 @@ This API allows users to translate novels into multiple languages, automatically
 - Auto-Detects Source Language → No need for manual selection.
 - Novel & Chapter Management → Store translations per novel & chapter.
 - Translation Dictionary → Ensures consistency in translated names and terms.
+- Chapter Deduplication → Prevents duplicate translations before using OpenAI.
+- Auto-Increment Chapter Number → If not specified, it assigns the next available chapter.
 - Optimized for Speed & Cost → Uses a single OpenAI API call for both translation & detection.
 - Rate Limiting → Prevents API abuse.
 
@@ -120,12 +122,13 @@ Server runs on: `http://localhost:8081`
 ```json
 {
   "novelId": 1,
-  "chapterNumber": 2,
   "targetLanguage": "English",
   "raw_text": "主人公进入了地下城。",
   "dictionary": { "主人公": "protagonist" }
 }
 ```
+
+- `chapterNumber` is optional. If omitted, the next chapter number will be auto-assigned.
 
 #### Example Response
 
@@ -165,10 +168,24 @@ Server runs on: `http://localhost:8081`
 
 ## Technologies Used
 
-- Node.js + Express.js → Backend
-- Sequelize + SQLite → Database
-- OpenAI API → Language Translation
-- Rate Limiting (express-rate-limit) → API Protection
+### Backend
+
+- **Node.js + Express.js** → Server-side API
+- **Sequelize + SQLite** → ORM and database engine
+- **dotenv** → Environment variable loader
+- **express-rate-limit** → Rate limiting middleware
+
+### AI & Token Optimization
+
+- **OpenAI API** → Language translation and detection
+- **tiktoken** → Token estimation to stay within OpenAI limits
+
+### Dev & Build Tools
+
+- **Vite** → Frontend dev server and build tool
+- **TypeScript** → Used in build pipeline for typed code (optional in backend)
+- **ESLint** → Code quality and linting
+- **PostCSS + TailwindCSS** → Frontend styling (if frontend is attached)
 
 ---
 
@@ -176,27 +193,27 @@ Server runs on: `http://localhost:8081`
 
 ### 1. How does the translation API detect languages?
 
-- OpenAI automatically detects the source language and includes it in the response.
+- The OpenAI prompt includes a rule to auto-detect the source language and return it in the response.
 
 ### 2. Can I translate to multiple languages?
 
-- Yes, simply change `"targetLanguage"` in the request.
+- Yes. Just change the `"targetLanguage"` value in your request.
 
 ### 3. How does the dictionary work?
 
-- The dictionary ensures names and terms stay consistent across translations.
+- It ensures term consistency by storing known translations and expanding it as new names appear.
 
 ### 4. What happens if I translate the same chapter twice?
 
-- The API prevents duplicate translations for the same chapter and language.
+- The API checks for duplicates and prevents them **before sending requests to OpenAI** to avoid waste.
 
 ---
 
 ## Future Improvements
 
-- Support for additional translation models
-- Advanced dictionary term suggestions
-- User authentication for API access
+- User authentication and roles
+- Suggested dictionary terms based on usage
+- Richer chapter metadata (e.g. titles, summaries)
 
 ---
 
@@ -214,32 +231,3 @@ Pull requests are welcome! To contribute:
 ## License
 
 This project is MIT Licensed.
-
-## Technologies Used
-
-### Backend
-
-- Node.js + Express.js → Server-side framework for handling API requests
-- Sequelize + SQLite → ORM for database management
-
-### AI & Language Processing
-
-- OpenAI API → Handles text translation and language detection
-- tiktoken → Token estimation for OpenAI API efficiency
-
-### API Security & Optimization
-
-- express-rate-limit → Protects the API from abuse by limiting requests
-- dotenv → Manages environment variables securely
-
-### Frontend Dependencies
-
-- React + React DOM → Frontend framework for UI rendering
-- Lucide React → Icon library for UI components
-
-### Development & Tooling
-
-- Vite → Development server for fast frontend builds
-- TypeScript → Enhances JavaScript with static typing (used in build process)
-- ESLint → Enforces code quality and best practices
-- PostCSS + TailwindCSS → Stylesheets for modern UI design
