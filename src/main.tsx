@@ -8,6 +8,7 @@ import Terms from "./pages/TermsPage.tsx";
 import Error from "./pages/ErrorPage.tsx";
 import Home from "./pages/HomePage.tsx";
 import Library from "./pages/LibraryPage.tsx";
+import Settings from "./pages/SettingsPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -18,6 +19,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="home" element={<Home />} />
             <Route path="library" element={<Library />} />
             <Route path="terms" element={<Terms />} />
+            <Route path="settings" element={<Settings />} />
             <Route path="*" element={<Error />} />
           </Route>
         </Routes>
