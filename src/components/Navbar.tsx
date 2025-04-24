@@ -1,3 +1,5 @@
+import { NavLink } from "react-router";
+
 export default function Navbar() {
   return (
     <div>
@@ -7,16 +9,18 @@ export default function Navbar() {
         </div>
         <ul className="flex gap-2 grow justify-center">
           <li>
-            <a href="#">Translate</a>
+            <NavLink to={"/home"}>Home</NavLink>
           </li>
           <li>
-            <a href="#">Library</a>
+            <NavLink to={"/library"}>Library</NavLink>
           </li>
           <li>
-            <a href="#">Dictionary</a>
+            <NavLink to={"/terms"}>Dictionary</NavLink>
+          </li>
+          <li>
+            <NavLink to={"/settings"}>Settings</NavLink>
           </li>
         </ul>
-        <div>Settings</div>
       </nav>
     </div>
   );
