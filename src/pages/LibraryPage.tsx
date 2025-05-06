@@ -1,26 +1,52 @@
-export default function Library() {
-  const _novels = [
-    { id: 1, title: "title1", language: "language1" },
-    { id: 2, title: "title2", language: "language2" },
-    { id: 3, title: "title3", language: "language3" },
-    { id: 4, title: "title4", language: "language4" },
-    { id: 5, title: "title5", language: "language5" },
-    { id: 6, title: "title6", language: "language6" },
-    { id: 7, title: "title7", language: "language7" },
-    { id: 8, title: "title8", language: "language8" },
-  ];
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
+import axios from "axios";
+import EmptyState from "../components/EmptyState";
+
+interface Novel {
+  id: number;
+  title: string;
+  language: string;
+}
+
+export default function LibraryPage() {
+  const [novels, setNovels] = useState<Novel[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchNovels = async () => {
+      try {
+        const res = await axios.get("http://localhost:8081/api/novels");
+        setNovels(res.data);
+      } catch (err) {
+        console.error(err);
+        setError(`Failed to fetch novels:{err}`);
+      }
+    };
+
+    fetchNovels();
+  }, []);
+  if (!novels.length) return <EmptyState message="No novels found." />;
   return (
-    <div>
-      <ul>
-        {_novels.map(({ id, title, language }) => {
-          return (
-            <li key={id}>
-              <div>{title}</div>
-              <div>{language}</div>
-            </li>
-          );
-        })}
+    <main className="max-w-4xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Library</h1>
+      {error && <p className="text-red-500">{error}</p>}
+      <ul className="space-y-4">
+        {novels.map((novel) => (
+          <li
+            key={novel.id}
+            className="border p-4 rounded shadow hover:bg-gray-50"
+          >
+            <Link
+              to={`/library/${novel.id}`}
+              className="text-lg font-semibold text-blue-600 hover:underline"
+            >
+              {novel.title}
+            </Link>
+            <p className="text-sm text-gray-600">Language: {novel.language}</p>
+          </li>
+        ))}
       </ul>
-    </div>
+    </main>
   );
 }

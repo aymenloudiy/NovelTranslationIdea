@@ -1,24 +1,8 @@
 export default function Footer() {
   return (
-    <footer>
-      <div>
-        <a href="#">
-          <img src="" alt="Novel translation idea logo" />
-        </a>
-        <nav>
-          <ul>
-            <li>
-              <a href="#">Resources</a>
-            </li>
-            <li>
-              <a href="#">FAQ</a>
-            </li>
-            <li>
-              <a href="#">Sign Up</a>
-            </li>
-          </ul>
-        </nav>
-        <small>&copy; 2025 Novel Translation Idea</small>
+    <footer className="bg-gray-800 text-gray-300 py-6">
+      <div className="px-4 sm:px-6 lg:px-8 w-full max-w-screen-xl mx-auto text-center text-sm">
+        &copy; {new Date().getFullYear()} Novel Translator. All rights reserved.
       </div>
     </footer>
   );
