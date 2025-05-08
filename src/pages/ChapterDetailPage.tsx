@@ -78,7 +78,7 @@ export default function ChapterDetailPage() {
           {showOriginal ? "Show Translation" : "Show Original"}
         </button>
       </div>
-      <article className="whitespace-pre-line bg-gray-100 p-4 rounded shadow">
+      <article className="whitespace-pre-line bg-gray-100 p-4 rounded shadow text-black">
         {contentToShow}
       </article>
     </main>
