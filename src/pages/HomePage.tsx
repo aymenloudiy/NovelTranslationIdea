@@ -15,6 +15,11 @@ export default function HomePage() {
   const [response, setResponse] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dictionary, setDictionary] = useState<Record<string, string>>({});
+  const [showForm, setShowForm] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newLanguage, setNewLanguage] = useState("");
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     axios
@@ -63,8 +68,31 @@ export default function HomePage() {
     }
   };
 
+  const handleAddNovel = async () => {
+    if (!newTitle || !newLanguage) return;
+
+    setSubmitLoading(true);
+    setSubmitError("");
+
+    try {
+      await axios.post("http://localhost:8081/api/novels", {
+        title: newTitle,
+        language: newLanguage,
+      });
+      const res = await axios.get("http://localhost:8081/api/novels");
+      setNovels(res.data);
+      setShowForm(false);
+      setNewTitle("");
+      setNewLanguage("");
+    } catch (err) {
+      console.log(err);
+      setSubmitError("Failed to add novel.");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
+    <main className="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-2">
       <h1 className="text-2xl font-bold mb-6">Translate Chapter</h1>
       <label className="block mb-2 font-medium">Select Novel:</label>
       <select
@@ -110,6 +138,43 @@ export default function HomePage() {
             Detected: {response.detected_source_language}
           </p>
           <p>{response.translated_text}</p>
+        </div>
+      )}
+      <div className="mb-6">
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          {showForm ? "Cancel" : "Add New Novel"}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="mb-6 bg-gray-100 p-4 rounded shadow">
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Title</label>
+            <input
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Language</label>
+            <input
+              value={newLanguage}
+              onChange={(e) => setNewLanguage(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+          <button
+            onClick={handleAddNovel}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            disabled={submitLoading}
+          >
+            {submitLoading ? "Adding..." : "Add Novel"}
+          </button>
+          {submitError && <p className="text-red-500 mt-2">{submitError}</p>}
         </div>
       )}
     </main>
