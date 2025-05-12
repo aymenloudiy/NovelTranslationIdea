@@ -138,8 +138,7 @@ router.put(
             targetLanguage: targetLanguage || entry.targetLanguage,
           },
         });
-
-        if (duplicate && duplicate.id !== id) {
+        if (duplicate && duplicate.id !== Number(id)) {
           return res.status(400).json({
             error: `The term "${sourceTerm}" already exists for ${sourceLanguage} → ${targetLanguage}.`,
           });
