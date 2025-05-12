@@ -60,12 +60,18 @@ const TranslationDictionary = sequelize.define(
 );
 
 TranslationDictionary.addHook("beforeValidate", async (entry) => {
+  if (!entry.novelId && entry.id) {
+    const existingEntry = await TranslationDictionary.findByPk(entry.id);
+    if (existingEntry) {
+      entry.novelId = existingEntry.novelId;
+    }
+  }
+
   if (!entry.novelId) {
-    console.error("Error: novelId is missing before dictionary validation.");
     throw new Error("Novel ID is required for dictionary entries.");
   }
 
-  const existing = await TranslationDictionary.findOne({
+  const conflict = await TranslationDictionary.findOne({
     where: {
       novelId: entry.novelId,
       sourceTerm: entry.sourceTerm,
@@ -73,9 +79,10 @@ TranslationDictionary.addHook("beforeValidate", async (entry) => {
       targetLanguage: entry.targetLanguage,
     },
   });
-  if (existing && entry.id !== existing.id) {
+  const isSame = conflict && entry.id && conflict.id === entry.id;
+  if (conflict && !isSame) {
     throw new Error(
-      `Term "${entry.sourceTerm}" already exists for ${entry.sourceLanguage} → ${entry.targetLanguage}.`
+      `The term "${entry.sourceTerm}" already exists for ${entry.sourceLanguage} → ${entry.targetLanguage}.`
     );
   }
 });
