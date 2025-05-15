@@ -71,8 +71,12 @@ export default function TermsPage() {
       });
       setEditingId(null);
       setError("");
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Error saving term.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || "Error saving term.");
+      } else {
+        setError("Error saving term.");
+      }
     }
   };
 
@@ -92,7 +96,7 @@ export default function TermsPage() {
   };
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Term Dictionary</h1>
 
       <label className="block mb-2 font-medium">Select Novel:</label>
@@ -195,6 +199,6 @@ export default function TermsPage() {
           </div>
         </>
       )}
-    </main>
+    </div>
   );
 }
