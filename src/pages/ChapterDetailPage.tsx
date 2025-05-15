@@ -66,7 +66,7 @@ export default function ChapterDetailPage() {
       : chapter.translatedContent;
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">
           Chapter {chapter.chapterNumber} – {chapter.targetLanguage}
@@ -81,6 +81,6 @@ export default function ChapterDetailPage() {
       <article className="whitespace-pre-line bg-gray-100 p-4 rounded shadow text-black">
         {contentToShow}
       </article>
-    </main>
+    </div>
   );
 }

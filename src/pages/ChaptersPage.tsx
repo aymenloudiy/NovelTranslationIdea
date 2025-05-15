@@ -45,7 +45,7 @@ export default function ChaptersPage() {
   if (!chapters.length)
     return <EmptyState message="No chapters found for this novel." />;
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Chapters – {title}</h1>
       {error && <p className="text-red-500">{error}</p>}
       <ul className="space-y-4">
@@ -60,6 +60,6 @@ export default function ChaptersPage() {
           </li>
         ))}
       </ul>
-    </main>
+    </div>
   );
 }
