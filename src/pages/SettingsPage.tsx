@@ -1,3 +1,3 @@
 export default function Settings() {
-  return <div>Settings</div>;
+  return <h1>PAGE UNDER CONSTRUCTION</h1>;
 }
